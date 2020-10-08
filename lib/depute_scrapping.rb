@@ -7,15 +7,6 @@ def url_base
     doc = Nokogiri::HTML(open(urlpage))
 end
 
-def search_depute
-    depute_array = []
-    fullname = url_base.xpath('//*[@id="deputes-list"]/div/ul/li/a/text()').each { |name| depute_array << name.text.gsub('M.', '').gsub('Mme', '').strip }
-    
-return depute_array
-end
-
-
-
 
 def search_href
     href_array = []
@@ -40,11 +31,40 @@ return depute_email_array
 
 end
 
-def zip_tout_ca
-    name = search_depute
-    email = search_email(search_href)
-    hash = Hash[*name.zip(email).flatten]
-   print hash
-end
+# Array qui contient que les prénoms des députés
+def get_firstnames
+    firstnames = Array.new
+    page = url_base
+    page.css("div#deputes-list li a[href]").each {|n| firstnames << n.text.gsub("M. ","").gsub("Mme ","").split(' ').first}
+    return firstnames
+  end
 
-zip_tout_ca
+  
+  # Array qui contient que les noms des députés
+  def get_lastnames
+    lastnames = Array.new
+    page = url_base
+    page.css("div#deputes-list li a[href]").each {|n| lastnames << n.text.gsub("M. ","").gsub("Mme ","").split(' ').drop(1).join(" ")}
+    return lastnames
+  end
+
+  def depute_scraper
+    mail = search_email(search_href)
+    firstname = get_firstnames
+    secondname = get_lastnames
+
+    array = []
+   
+    
+    (0..-1).each do |x|
+      new_hash = {}
+      new_hash["first_name"] = firstname[x] 
+      new_hash["last_name"] = secondname[x] 
+      new_hash["email"] = mail[x] 
+      array << new_hash   
+    end 
+
+    print array
+  end
+
+  depute_scraper

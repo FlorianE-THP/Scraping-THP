@@ -3,7 +3,7 @@ require_relative '../lib/depute_scrapping'
 
 describe "Depute Scrapping should scrap data from a website of the Assemblée Nationale" do
     it "should return a array with the names of deputés" do
-      expect(search_depute).not_to be_nil
+      expect(get_firstnames).not_to be_nil
     end
   end
 
